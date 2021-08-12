@@ -1,0 +1,21 @@
+name: Pull request workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Build artifact
+        run: echo "Building..."
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Deploy
+        run: echo "Deploying to prod"
