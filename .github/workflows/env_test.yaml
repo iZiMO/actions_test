@@ -29,7 +29,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    environment: production
+#     environment: production
     strategy:
       matrix: 
         flavor: [foo, bar, baz]
