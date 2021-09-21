@@ -15,20 +15,25 @@ jobs:
         run: echo "Building ${{ matrix.flavor }}"
         
       - name: Generate file
-        run: echo "${{matrix.flavor}}" >> test_file.txt
+        run: |
+          mkdir -p ./path/to/files
+          echo "${{matrix.flavor}}" >> ./path/to/files/test_file.txt
     
       - name: Cache
         uses: actions/cache@v2.1.6
         with:
           # A list of files, directories, and wildcard patterns to cache and restore
-          path: ./test_file.txt
+          path: ./path/to/**/*.txt
           # An explicit key for restoring and saving the cache
-          key: AAB
+          key: ${{matrix.flavor}}-AAB
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
     environment: production
+    strategy:
+      matrix: 
+        flavor: [foo, bar, baz]
 
     steps:
       - name: Deploy
@@ -40,7 +45,7 @@ jobs:
           # A list of files, directories, and wildcard patterns to cache and restore
           path: ./test_file.txt
           # An explicit key for restoring and saving the cache
-          key: AAB
+          key: ${{matrix.flavor}}-AAB
           
       - name: Printing file contents
         run: cat ./test_file.txt
