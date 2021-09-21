@@ -20,13 +20,11 @@ jobs:
           echo "${{matrix.flavor}}" >> ./path/to/files/test_file.txt
           cat ./path/to/files/test_file.txt
     
-      - name: Cache
-        uses: actions/cache@v2.1.6
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
         with:
-          # A list of files, directories, and wildcard patterns to cache and restore
+          name: ${{ matrix.flavor }}-artifacts
           path: ./path/to/**/*.txt
-          # An explicit key for restoring and saving the cache
-          key: ${{matrix.flavor}}-AAB
 
   deploy:
     needs: build
@@ -40,13 +38,14 @@ jobs:
       - name: Deploy
         run: echo "Deploying ${{matrix.flavor}} to prod"
         
-      - name: Cache
-        uses: actions/cache@v2.1.6
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v2.0.10
         with:
-          # A list of files, directories, and wildcard patterns to cache and restore
-          path: ./path/to/files/test_file.txt
-          # An explicit key for restoring and saving the cache
-          key: ${{matrix.flavor}}-AAB
+          # Artifact name
+          name: ${{ matrix.flavor }}-artifacts
+      
+      - name: Print folder structure
+        run: find . -iname "*.txt"
           
       - name: Printing file contents
         run: cat ./path/to/files/test_file.txt
