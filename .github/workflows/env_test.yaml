@@ -8,22 +8,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix: 
-        flavor: [foo, bar, baz]
+        variant: [Jora, Jobsdb, Jobstreet]
 
     steps:
       - name: Build artifact
-        run: echo "Building ${{ matrix.flavor }}"
+        run: echo "Building ${{ matrix.variant }}"
         
       - name: Generate file
         run: |
           mkdir -p ./path/to/files
-          echo "${{matrix.flavor}}" >> ./path/to/files/test_file.txt
+          echo "${{matrix.variant}}" >> ./path/to/files/test_file.txt
           cat ./path/to/files/test_file.txt
     
       - name: Archive artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.flavor }}-artifacts
+          name: ${{ matrix.variant }}-artifacts
           path: ./path/to/**/*.txt
 
   deploy:
@@ -32,20 +32,33 @@ jobs:
 #     environment: production
     strategy:
       matrix: 
-        flavor: [foo, bar, baz]
+        variant: [Jora, Jobsdb, Jobstreet]
 
-    steps:
-      - name: Deploy
-        run: echo "Deploying ${{matrix.flavor}} to prod"
-        
-      - name: Download a Build Artifact
+    steps:        
+      - name: Download build artifact
         uses: actions/download-artifact@v2.0.10
         with:
           # Artifact name
-          name: ${{ matrix.flavor }}-artifacts
+          name: ${{ matrix.variant }}-artifacts
       
-      - name: Print folder structure
-        run: find . -iname "*.txt"
+      - name: Get package name
+        run: |
+          variant=${{ matrix.variant }}
+
+          if [[ $variant = "Jora" ]]
+          then
+            package="com.jora.android"
+          elif [[ $variant = "Jobsdb" ]]
+          then
+            package="com.jora.android.sgjobsdb"
+          elif [[ $variant = "Jobstreet" ]]
+          then
+            package="com.jora.jobstreet"
+          fi
+
+          echo "PACKAGE=$package" >> $GITHUB_ENV
+      
+      - name: Print package
+        run: echo $PACKAGE
+        
           
-      - name: Printing file contents
-        run: cat ./path/to/files/test_file.txt
