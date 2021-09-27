@@ -4,11 +4,24 @@ on:
   workflow_dispatch:
 
 jobs:
+  determine-variants-to-build:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.determine-variants.outputs.matrix }}
+    steps:
+      - name: Build matrix
+        id: determine-variants
+        run: |
+          JSON="{\"include\":["
+          JSON="$JSON{\"variant\": \"Jora\"},{\"variant\": \"Jobstreet\"},{\"variant\": \"Jobsdb\"}"
+          JSON="$JSON]}"
+          echo "::set-output name=matrix::$( echo "$JSON" )"
+          
   build:
+    needs: determine-variants-to-build
     runs-on: ubuntu-latest
     strategy:
-      matrix: 
-        variant: [Jora, Jobsdb, Jobstreet]
+      matrix: ${{fromJson(needs.determine-variants-to-build.outputs.matrix)}}
 
     steps:
       - name: Build artifact
@@ -25,27 +38,24 @@ jobs:
         with:
           name: ${{ matrix.variant }}-artifacts
           path: ./path/to/**/*.txt
-      
-      - name: Set outputs
-        run: echo "::set-output name=variant::${{ matrix.variant }}"
 
   deploy:
-    needs: build
+    needs: [determine-variants-to-build, build]
     runs-on: ubuntu-latest
 #     environment: production
-    env: 
-      VARIANT: ${{ needs.build.outputs.variant }}
+    strategy:
+      matrix: ${{fromJson(needs.determine-variants-to-build.outputs.matrix)}}
 
     steps:        
       - name: Download build artifact
         uses: actions/download-artifact@v2.0.10
         with:
           # Artifact name
-          name: ${{ env.VARIANT }}-artifacts
+          name: ${{ matrix.variant }}-artifacts
       
       - name: Get package name
         run: |
-          variant=${{ env.VARIANT }}
+          variant=${{ matrix.variant }}
 
           if [[ $variant = "Jora" ]]
           then
