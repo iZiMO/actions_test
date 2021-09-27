@@ -25,25 +25,27 @@ jobs:
         with:
           name: ${{ matrix.variant }}-artifacts
           path: ./path/to/**/*.txt
+      
+      - name: Set outputs
+        run: echo "::set-output name=variant::${{ matrix.variant }}"
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
 #     environment: production
-    strategy:
-      matrix: 
-        variant: [Jora, Jobsdb, Jobstreet]
+    env: 
+      VARIANT: ${{ needs.build.outputs.variant }}
 
     steps:        
       - name: Download build artifact
         uses: actions/download-artifact@v2.0.10
         with:
           # Artifact name
-          name: ${{ matrix.variant }}-artifacts
+          name: ${{ env.VARIANT }}-artifacts
       
       - name: Get package name
         run: |
-          variant=${{ matrix.variant }}
+          variant=${{ env.VARIANT }}
 
           if [[ $variant = "Jora" ]]
           then
