@@ -42,7 +42,7 @@ jobs:
   deploy:
     needs: [determine-variants-to-build, build]
     runs-on: ubuntu-latest
-#     environment: production
+    environment: production
     strategy:
       matrix: ${{fromJson(needs.determine-variants-to-build.outputs.matrix)}}
 
