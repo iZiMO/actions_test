@@ -17,6 +17,15 @@ jobs:
           JSON="$JSON]}"
           echo "::set-output name=matrix::$( echo "$JSON" )"
           
+      - name: Read Flutter version
+        id: read-flutter-version
+        uses: notiz-dev/github-action-json-property@release
+        with:
+          path: ${{ env.flutterSourceDir }}/embedded/.fvm/fvm_config.json
+          prop_path: 'flutterSdkVersion'
+      
+      - run: echo ${{steps.read-flutter-version.outputs.prop}} 
+          
   build:
     needs: determine-variants-to-build
     runs-on: ubuntu-latest
