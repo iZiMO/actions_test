@@ -21,7 +21,7 @@ jobs:
         id: read-flutter-version
         uses: notiz-dev/github-action-json-property@release
         with:
-          path: ${{ env.flutterSourceDir }}/embedded/.fvm/fvm_config.json
+          path: ./embedded/.fvm/fvm_config.json
           prop_path: 'flutterSdkVersion'
       
       - run: echo ${{steps.read-flutter-version.outputs.prop}} 
