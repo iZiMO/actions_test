@@ -1,3 +1,2 @@
 # actions_test
 
-test
