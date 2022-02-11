@@ -9,12 +9,20 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     timeout-minutes: 1
     
+    if:  startsWith(github.head_ref, 'releases/')
+
     steps:
+      - run: echo "The head of this PR starts with 'releases/'"
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          echo "$GITHUB_CONTEXT"
       - name: Log
         run: |
-          git rev-parse --verify HEAD
+          echo ${{ github.event.pull_request.head.sha }}
+          echo ${{ github.event.pull_request }}
         
