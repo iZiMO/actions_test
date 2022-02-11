@@ -16,4 +16,5 @@ jobs:
     steps:
       - name: Log
         run: |
-        git rev-parse --verify HEAD
+          git rev-parse --verify HEAD
+        
