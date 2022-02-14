@@ -40,7 +40,7 @@ jobs:
       
       - name: Read version
         run: |
-          echo "Version read: ${{steps.get-version.version}}"
+          echo "Version read: ${{steps.get-version.outputs.version}}"
 
 
 #       - name: Tag release
