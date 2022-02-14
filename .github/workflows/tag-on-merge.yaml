@@ -24,7 +24,19 @@ jobs:
       - name: Log
         run: |
           echo ${{ github.event.pull_request.head.sha }}
-          echo ${{ github.event.pull_request }}
+          echo ${{ github.head_ref }}
+          
+      - name: Get version
+        id: get-version
+        run: |
+          if [[ "${{ github.head_ref }}" =~ ^release\/.*\/(v.*)$ ]]; then
+            echo $version
+            echo "::set-output name=version::${BASH_REMATCH[1]}"
+          else
+            echo "Does not match release branch format"
+            exit 1
+          fi
+
 
       - name: Tag release
         uses: actions/github-script@v4
@@ -33,6 +45,6 @@ jobs:
             github.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/0.0.0-pr${{env.PR_NUMBER}}",
+              ref: "refs/tags/${{steps.get-version.version }}",
               sha: "${{ github.event.pull_request.head.sha }}"
             })
