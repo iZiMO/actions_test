@@ -38,13 +38,13 @@ jobs:
             exit 1
           fi
 
-#       - name: Tag release
-#         uses: actions/github-script@v4
-#         with:
-#           script: |
-#             github.git.createRef({
-#               owner: context.repo.owner,
-#               repo: context.repo.repo,
-#               ref: "refs/tags/${{steps.get-version.outputs.version}}",
-#               sha: "${{github.event.pull_request.head.sha}}"
-#             })
+      - name: Tag release
+        uses: actions/github-script@v4
+        with:
+          script: |
+            github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{gihub.head_ref}}",
+              sha: "${{github.event.pull_request.head.sha}}"
+            })
