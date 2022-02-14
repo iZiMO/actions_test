@@ -32,11 +32,15 @@ jobs:
           if [[ "${{ github.head_ref }}" =~ ^release\/.*\/(v.*)$ ]]; then
             version="${BASH_REMATCH[1]}"
             echo "Version detected: ${version}"
-            echo "::set-output name=version::"
+            echo "::set-output name=version::${version}"
           else
             echo "Does not match release branch format"
             exit 1
           fi
+      
+      - name: Read version
+        run: |
+          echo "Version read: ${{steps.get-version.version}}"
 
 
 #       - name: Tag release
