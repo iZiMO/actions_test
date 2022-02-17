@@ -21,28 +21,21 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
           echo "$GITHUB_CONTEXT"
-      - name: Log
-        run: |
-          echo ${{ github.event.pull_request.head.sha }}
-          echo ${{ github.head_ref }}
-          
-      - name: Get version
-        id: get-version
-        run: |
-          if [[ "${{ github.head_ref }}" =~ ^release\/.*\/(v.*)$ ]]; then
-            version="${BASH_REMATCH[1]}"
-            echo "Version detected: ${version}"
-            echo "::set-output name=version::${version}"
-          else
-            echo "Does not match release branch format"
-            exit 1
-          fi
 
       - name: Tag release
         uses: actions/github-script@v4
         with:
           script: |
-            github.git.createRef({
+            try {
+                await github.git.deleteRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: "refs/tags/${{github.head_ref}}"
+                })
+            } catch (e) {
+              console.log("The release tag doesn't exist yet: " + e)
+            }
+            await github.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: "refs/tags/${{github.head_ref}}",
