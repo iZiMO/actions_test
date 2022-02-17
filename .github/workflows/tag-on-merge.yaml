@@ -38,6 +38,7 @@ jobs:
         uses: actions/github-script@v4
         with:
           script: |
+            console.log("Attempting to delete existing ref")
             try {
                 await github.git.deleteRef({
                   owner: context.repo.owner,
@@ -45,8 +46,9 @@ jobs:
                   ref: "refs/tags/${{steps.get-version.outputs.version}}"
                 })
             } catch (e) {
-              console.log("The release tag doesn't exist yet")
+              console.log("The release tag doesn't exist yet", e)
             }
+            console.log("Attempting to create new ref")
             await github.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
