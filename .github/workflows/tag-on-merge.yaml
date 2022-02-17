@@ -33,7 +33,7 @@ jobs:
                   ref: "refs/tags/${{github.head_ref}}"
                 })
             } catch (e) {
-              console.log("The release tag doesn't exist yet: " + e)
+              console.log("The release tag doesn't exist yet")
             }
             await github.git.createRef({
               owner: context.repo.owner,
