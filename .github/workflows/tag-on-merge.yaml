@@ -25,7 +25,7 @@ jobs:
       - name: Get version
         id: get-version
         run: |
-          if [[ "${{ github.head_ref }}" =~ ^release\/(v.*)$ ]]; then
+          if [[ "${{ github.head_ref }}" =~ ^release\/(.*)$ ]]; then
             version="${BASH_REMATCH[1]}"
             echo "Version detected: ${version}"
             echo "::set-output name=version::${version}"
