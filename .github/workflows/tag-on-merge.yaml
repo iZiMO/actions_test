@@ -28,8 +28,8 @@ jobs:
           if [[ "${{ github.head_ref }}" =~ ^release\/(.*)$ ]]; then
             version="${BASH_REMATCH[1]}"
             echo "Version detected: ${version}"
-            version="{$version}/${{ github.run_number }}"
-            echo "Run number appended: ${version}
+            version="${version}/${{ github.run_number }}"
+            echo "Run number appended: ${version}"
             echo "::set-output name=version::${version}"
           else
             echo "Does not match release branch format"
