@@ -1,0 +1,20 @@
+on:
+  workflow_dispatch:
+
+name: Dynamic env var
+
+env:
+  variant: 'FOO'
+
+jobs:
+  build:
+    name: Get secret
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get secret
+        env:
+          FOO_CREDS: ${{ secrets.FOO_CREDS }}
+          BAR_CREDS: ${{ secrets.BAR_CREDS }}
+        run: |
+          CREDS_VAR_NAME="${env.variant}_CREDS"
+          echo "${!CREDS_VAR_NAME}"
