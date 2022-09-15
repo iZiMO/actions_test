@@ -16,5 +16,6 @@ jobs:
           FOO_CREDS: ${{ secrets.FOO_CREDS }}
           BAR_CREDS: ${{ secrets.BAR_CREDS }}
         run: |
+          echo "plain" | base64 --encode
           CREDS_VAR_NAME="${{ env.variant }}_CREDS"
           echo "${!CREDS_VAR_NAME}"
